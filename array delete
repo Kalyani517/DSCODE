@@ -1,0 +1,80 @@
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+void delete_from_beginning(int array[], int *size) 
+{
+    if (*size == 0) 
+    {
+        printf("Array is empty. Cannot delete from beginning.\n");
+        return;
+    }
+    for (int i = 0; i < *size - 1; i++)
+    {
+        array[i] = array[i + 1]; 
+    }
+    (*size)--;
+}
+
+void delete_from_end(int *size)
+{
+    if (*size == 0) {
+        printf("Array is empty. Cannot delete from end.\n");
+        return;
+    }
+    (*size)--;
+}
+
+void delete_from_position(int array[], int *size, int position)
+{
+    if (position < 0 || position >= *size) 
+    {
+        printf("Invalid position. Cannot delete.\n");
+        return;
+    }
+    for (int i = position; i < *size - 1; i++) 
+    {
+        array[i] = array[i + 1]; 
+    }
+    (*size)--; 
+}
+
+void display_array(int array[], int size) 
+{
+    if (size == 0) {
+        printf("Array is empty.\n");
+        return;
+    }
+    printf("Array elements: ");
+    for (int i = 0; i < size; i++) 
+    {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+}
+
+int main()
+{
+    int array[MAX_SIZE] = {10, 20, 30, 40, 50};
+    int size = 5;  // Current size of the array
+
+    display_array(array, size);
+
+    delete_from_beginning(array, &size);
+    printf("After deleting from beginning:\n");
+    display_array(array, size);
+
+    
+    delete_from_end(&size);
+    printf("After deleting from end:\n");
+    display_array(array, size);
+
+    int position;
+    printf("Enter the position to delete (0 to %d): ", size - 1);
+    scanf("%d", &position);
+    delete_from_position(array, &size, position);
+    printf("After deleting from position %d:\n", position);
+    display_array(array, size);
+
+    return 0;
+}

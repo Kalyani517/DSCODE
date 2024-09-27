@@ -1,0 +1,76 @@
+#include <stdio.h>
+
+#define MAX_SIZE 100 
+void insertAtBeginning(int arr[], int *n, int value) {
+    if (*n >= MAX_SIZE) {
+        printf("Array is full!\n");
+        return;
+    }
+
+
+    for (int i = *n; i > 0; i--) {
+        arr[i] = arr[i - 1];
+    }
+    arr[0] = value; 
+    (*n)++;     
+}
+
+void insertAtEnd(int arr[], int *n, int value) {
+    if (*n >= MAX_SIZE) {
+        printf("Array is full!\n");
+        return;
+    }
+
+    arr[*n] = value;  
+    (*n)++;           
+}
+
+void insertAtPosition(int arr[], int *n, int value, int position) {
+    if (*n >= MAX_SIZE) {
+        printf("Array is full!\n");
+        return;
+    }
+    if (position < 0 || position > *n) {
+        printf("Invalid position!\n");
+        return;
+    }
+
+    for (int i = *n; i > position; i--)
+    {
+        arr[i] = arr[i - 1];
+    }
+    arr[position] = value;  
+    (*n)++;         
+}
+
+void printArray(int arr[], int n) 
+{
+    for (int i = 0; i < n; i++) 
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() 
+{
+    int arr[MAX_SIZE] = {2, 3, 4};
+    int n = 3; 
+
+    printf("Original Array: ");
+    printArray(arr, n);
+
+    insertAtBeginning(arr, &n, 1);
+    printf("After inserting 1 at the beginning: ");
+    printArray(arr, n);
+
+    insertAtEnd(arr, &n, 5);
+    printf("After inserting 5 at the end: ");
+    printArray(arr, n);
+
+    insertAtPosition(arr, &n, 3, 2);
+    printf("After inserting 3 at position 2: ");
+    printArray(arr, n);
+
+    return 0;
+}

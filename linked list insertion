@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node
+ {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data)
+ {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtBeginning(struct Node** head, int data) 
+{
+    struct Node* newNode = createNode(data);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void insertAtEnd(struct Node** head, int data)
+ {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* last = *head;
+    while (last->next != NULL)
+ {
+        last = last->next;
+    }
+    last->next = newNode;
+}
+
+void insertAtPosition(struct Node** head, int data, int position)
+ {
+    if (position < 0) {
+        printf("Position cannot be negative\n");
+        return;
+    }
+    if (position == 0) {
+        insertAtBeginning(head, data);
+        return;
+    }
+    
+    struct Node* newNode = createNode(data);
+    struct Node* current = *head;
+    
+    for (int i = 0; i < position - 1; i++)
+ {
+        if (current == NULL) {
+            printf("Position out of bounds\n");
+            return;
+        }
+        current = current->next;
+    }
+    newNode->next = current->next;
+    current->next = newNode;
+}
+
+void display(struct Node* head) 
+{
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main()
+ {
+    struct Node* linkedList = NULL;
+
+    insertAtEnd(&linkedList, 10);
+    insertAtEnd(&linkedList, 20);
+    insertAtBeginning(&linkedList, 5);
+    insertAtPosition(&linkedList, 15, 2); // Inserting 15 at position 2
+
+    display(linkedList); // Output: 5 -> 10 -> 15 -> 20 -> NULL
+
+    return 0;
+}
+

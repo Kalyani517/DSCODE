@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node 
+{
+    int data;
+    struct Node* next;
+};
+
+
+struct Node* createNode(int data)
+ {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the linked list
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void insertAtEnd(struct Node** head, int data) 
+{
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* last = *head;
+    while (last->next != NULL) 
+{
+        last = last->next;
+    }
+    last->next = newNode;
+}
+
+// Function to delete a node by value
+void deleteNode(struct Node** head, int key)
+ {
+    struct Node* current = *head;
+    struct Node* prev = NULL;
+
+    
+    if (current != NULL && current->data == key) 
+{
+        *head = current->next; // Change head
+        free(current); // Free old head
+        return;
+    }
+
+    
+    while (current != NULL && current->data != key)
+ {
+        prev = current;
+        current = current->next;
+    }
+
+    
+    if (current == NULL)
+ {
+        printf("Node with value %d not found.\n", key);
+        return;
+    }
+
+    
+    prev->next = current->next;
+    free(current); // Free memory
+}
+
+void display(struct Node* head) 
+{
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main()
+ {
+    struct Node* linkedList = NULL;
+
+    
+    insertAtEnd(&linkedList, 10);
+    insertAtEnd(&linkedList, 20);
+    insertAtBeginning(&linkedList, 5);
+    insertAtEnd(&linkedList, 30);
+
+    printf("Linked list after insertions:\n");
+    display(linkedList); 
+
+    
+    printf("\nDeleting 20 from the linked list:\n");
+    deleteNode(&linkedList, 20);
+    display(linkedList); 
+
+    
+    printf("\nAttempting to delete 40 from the linked list:\n");
+    deleteNode(&linkedList, 40); 
+
+    return 0;
+}

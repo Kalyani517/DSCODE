@@ -1,0 +1,132 @@
+&lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;ctype.h&gt;
+
+#define MAX 100
+
+typedef struct
+{
+char arr[MAX];
+int top;
+} Stack;
+
+void initStack(Stack* s)
+{
+s-&gt;top = -1;
+}
+
+int isFull(Stack* s)
+{
+return s-&gt;top == MAX - 1;
+}
+
+int isEmpty(Stack* s)
+{
+return s-&gt;top == -1;
+}
+
+void push(Stack* s, char item)
+{
+
+if (!isFull(s))
+{
+s-&gt;arr[++s-&gt;top] = item;
+}
+}
+
+char pop(Stack* s)
+{
+if (!isEmpty(s))
+{
+return s-&gt;arr[s-&gt;top--];
+}
+return &#39;\0&#39;;
+}
+
+char peek(Stack* s)
+{
+if (!isEmpty(s))
+{
+return s-&gt;arr[s-&gt;top];
+}
+return &#39;\0&#39;;
+}
+
+int precedence(char op) {
+switch (op) {
+case &#39;+&#39;:
+case &#39;-&#39;:
+return 1;
+case &#39;*&#39;:
+
+case &#39;/&#39;:
+return 2;
+case &#39;^&#39;:
+return 3;
+default:
+return 0;
+}
+}
+
+void infixToPostfix(char* infix, char* postfix)
+{
+Stack stack;
+initStack(&amp;stack);
+int j = 0;
+
+for (int i = 0; infix[i] != &#39;\0&#39;; i++)
+{
+char token = infix[i];
+
+if (isalnum(token))
+{
+postfix[j++] = token;
+} else if (token == &#39;(&#39;)
+{
+push(&amp;stack, token);
+} else if (token == &#39;)&#39;)
+{
+while (!isEmpty(&amp;stack) &amp;&amp; peek(&amp;stack) != &#39;(&#39;)
+{
+postfix[j++] = pop(&amp;stack);
+
+}
+pop(&amp;stack);
+} else
+{
+while (!isEmpty(&amp;stack) &amp;&amp; precedence(token) &lt;= precedence(peek(&amp;stack)))
+{
+postfix[j++] = pop(&amp;stack);
+}
+push(&amp;stack, token);
+}
+}
+
+while (!isEmpty(&amp;stack))
+{
+postfix[j++] = pop(&amp;stack);
+}
+
+postfix[j] = &#39;\0&#39;;
+}
+
+int main()
+{
+char infix[MAX];
+char postfix[MAX];
+
+printf(&quot;Enter an infix expression: &quot;);
+fgets(infix, MAX, stdin);
+
+size_t len = strlen(infix);
+
+if (len &gt; 0 &amp;&amp; infix[len - 1] == &#39;\n&#39;)
+{
+infix[len - 1] = &#39;\0&#39;;
+}
+
+infixToPostfix(infix, postfix);
+printf(&quot;Postfix expression: %s\n&quot;, postfix);
+
+return 0;
+}

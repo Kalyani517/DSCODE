@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+
+typedef struct Entry
+{
+    int key;
+    int value;
+    int occupied; 
+} Entry;
+
+
+typedef struct HashTable
+{
+    Entry table[TABLE_SIZE];
+} HashTable;
+
+
+int hashFunction(int key)
+{
+    return key % TABLE_SIZE;
+}
+
+
+void initHashTable(HashTable* table) 
+{
+    for (int i = 0; i < TABLE_SIZE; i++) 
+    {
+        table->table[i].occupied = 0; 
+    }
+}
+
+
+int probe(HashTable* table, int index)
+{
+    int originalIndex = index;
+    while (table->table[index].occupied && table->table[index].key != -1) {
+        index = (index + 1) % TABLE_SIZE;
+        if (index == originalIndex) 
+        {
+            return -1; 
+        }
+    }
+    return index;
+}
+
+
+void insert(HashTable* table, int key, int value) 
+{
+    int index = hashFunction(key);
+    if (table->table[index].occupied && table->table[index].key != -1) {
+        index = probe(table, index); 
+    }
+    if (index == -1) 
+    {
+        printf("Hash table is full, cannot insert key: %d\n", key);
+        return;
+    }
+    table->table[index].key = key;
+    table->table[index].value = value;
+    table->table[index].occupied = 1;
+    printf("Inserted key: %d, value: %d at index: %d\n", key, value, index);
+}
+
+
+int search(HashTable* table, int key) 
+{
+    int index = hashFunction(key);
+    int originalIndex = index;
+    while (table->table[index].occupied) 
+    {
+        if (table->table[index].key == key) 
+        {
+            return table->table[index].value;
+        }
+        index = (index + 1) % TABLE_SIZE;
+        if (index == originalIndex) 
+        {
+            break; 
+        }
+    }
+    return -1; 
+}
+
+
+void delete(HashTable* table, int key)
+{
+    int index = hashFunction(key);
+    int originalIndex = index;
+    while (table->table[index].occupied)
+    {
+        if (table->table[index].key == key) 
+        {
+            table->table[index].key = -1; 
+            table->table[index].value = 0;
+            printf("Deleted key: %d from index: %d\n", key, index);
+            return;
+        }
+        index = (index + 1) % TABLE_SIZE;
+        if (index == originalIndex)
+        {
+            break; 
+        }
+    }
+    printf("Key: %d not found for deletion\n", key);
+}
+
+
+void printHashTable(HashTable* table) 
+{
+    printf("Hash Table:\n");
+    for (int i = 0; i < TABLE_SIZE; i++) 
+    {
+        if (table->table[i].occupied && table->table[i].key != -1) {
+            printf("Index %d: Key = %d, Value = %d\n", i, table->table[i].key, table->table[i].value);
+        } else {
+            printf("Index %d: Empty\n", i);
+        }
+    }
+}
+
+
+int main() 
+{
+    HashTable table;
+    initHashTable(&table);
+
+    
+    insert(&table, 15, 100);
+    insert(&table, 25, 200);
+    insert(&table, 35, 300);
+    insert(&table, 45, 400);
+
+    
+    printf("\nHash Table:\n");
+    printHashTable(&table);
+
+    
+    printf("\nSearch for key 25: %d\n", search(&table, 25));
+    printf("Search for key 99: %d\n", search(&table, 99));
+
+    
+    delete(&table, 25);
+    delete(&table, 99);
+
+    
+    printf("\nHash Table after deletion:\n");
+    printHashTable(&table);
+
+    return 0;
+}

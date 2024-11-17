@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TABLE_SIZE 10
+
+
+typedef struct Node 
+{
+    int key;
+    int value;
+    struct Node* next;
+} Node;
+
+
+typedef struct HashTable 
+{
+    Node* buckets[TABLE_SIZE];
+} HashTable;
+
+
+int hashFunction(int key) 
+{
+    return key % TABLE_SIZE;
+}
+
+
+void initHashTable(HashTable* table) 
+{
+    for (int i = 0; i < TABLE_SIZE; i++) 
+    {
+        table->buckets[i] = NULL;
+    }
+}
+
+
+void insert(HashTable* table, int key, int value) 
+{
+    int index = hashFunction(key);
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = table->buckets[index];
+    table->buckets[index] = newNode;
+    printf("Inserted key: %d, value: %d at index: %d\n", key, value, index);
+}
+
+
+int search(HashTable* table, int key) 
+{
+    int index = hashFunction(key);
+    Node* current = table->buckets[index];
+    while (current != NULL)
+    {
+        if (current->key == key)
+        {
+            return current->value;
+        }
+        current = current->next;
+    }
+    return -1; 
+}
+
+
+void delete(HashTable* table, int key) 
+{
+    int index = hashFunction(key);
+    Node* current = table->buckets[index];
+    Node* prev = NULL;
+
+    while (current != NULL) 
+    {
+        if (current->key == key) 
+        {
+            if (prev == NULL) 
+            {
+                table->buckets[index] = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            free(current);
+            printf("Deleted key: %d\n", key);
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+    printf("Key: %d not found for deletion\n", key);
+}
+
+
+void printHashTable(HashTable* table) 
+{
+    for (int i = 0; i < TABLE_SIZE; i++) 
+    {
+        printf("Bucket %d: ", i);
+        Node* current = table->buckets[i];
+        while (current != NULL) 
+        {
+            printf("(%d, %d) -> ", current->key, current->value);
+            current = current->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+
+int main() 
+{
+    HashTable table;
+    initHashTable(&table);
+
+    
+    insert(&table, 15, 100);
+    insert(&table, 25, 200);
+    insert(&table, 35, 300);
+    insert(&table, 10, 400);
+
+    
+    printf("\nHash Table:\n");
+    printHashTable(&table);
+
+    
+    printf("\nSearch for key 25: %d\n", search(&table, 25));
+    printf("Search for key 99: %d\n", search(&table, 99));
+
+    
+    delete(&table, 25);
+    delete(&table, 99);
+
+    
+    printf("\nHash Table after deletion:\n");
+    printHashTable(&table);
+
+    return 0;
+}
